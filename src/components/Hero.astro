@@ -1,0 +1,199 @@
+---
+import { hero } from '../data/content';
+
+// Divide el título en palabras para animarlas una por una
+const words = hero.title.split(' ');
+---
+
+<section class="section hero" id="inicio">
+  <div class="hero__bg" aria-hidden="true">
+    <div class="hero__orb hero__orb--a" data-parallax="-0.12"></div>
+    <div class="hero__orb hero__orb--b" data-parallax="0.1"></div>
+  </div>
+  <div class="fx" data-hearts="16" data-sparks="18" aria-hidden="true"></div>
+
+  <div class="container hero__content">
+    <p class="eyebrow hero__in" style="--i: 0">{hero.eyebrow}</p>
+
+    <h1 class="hero__title" aria-label={hero.title}>
+      {
+        words.map((w, i) => (
+          <span class="word" aria-hidden="true">
+            <span class:list={['word__inner', { 'is-heart': /❤/.test(w) }]} style={`--i:${i + 1}`}>
+              {w}
+            </span>
+          </span>
+        ))
+      }
+    </h1>
+
+    <p class="hero__subtitle hero__in" style={`--i:${words.length + 1}`}>{hero.subtitle}</p>
+
+    <button class="btn hero__in" style={`--i:${words.length + 2}`} data-hero-btn data-scroll-to="#para-ti">
+      {hero.button}
+    </button>
+
+  </div>
+
+  <div class="hero__cue hero__in" style={`--i:${words.length + 4}`} aria-hidden="true">
+    <span></span>
+  </div>
+</section>
+
+<style>
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    background:
+      radial-gradient(90% 60% at 50% 0%, rgba(255, 255, 255, 0.9), transparent 70%),
+      linear-gradient(165deg, #fff6f8 0%, #ffe6ec 52%, #fff1de 100%);
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .hero__orb {
+    position: absolute;
+    border-radius: 50%;
+    will-change: transform;
+  }
+  .hero__orb--a {
+    width: 22rem;
+    height: 22rem;
+    top: -6rem;
+    left: -8rem;
+    background: radial-gradient(circle at 35% 35%, rgba(255, 138, 166, 0.5), transparent 68%);
+  }
+  .hero__orb--b {
+    width: 24rem;
+    height: 24rem;
+    bottom: -8rem;
+    right: -9rem;
+    background: radial-gradient(circle at 60% 40%, rgba(244, 224, 169, 0.75), transparent 68%);
+  }
+
+  .hero__content {
+    padding-block: 2rem 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .hero__title {
+    font-size: clamp(3rem, 14.5vw, 6.6rem);
+    font-style: italic;
+    font-weight: 600;
+    line-height: 1.02;
+    color: var(--wine);
+  }
+
+  .word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+    padding: 0.06em 0.05em 0.14em;
+    margin-inline: 0.03em;
+  }
+  .word__inner {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--wine) 30%, var(--rose-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-right: 0.06em;
+  }
+  .word__inner.is-heart {
+    background: none;
+    color: initial;
+    animation: beat 1.6s ease-in-out infinite 2.4s;
+  }
+
+  .hero__subtitle {
+    max-width: 24rem;
+    font-size: clamp(1.02rem, 4.2vw, 1.3rem);
+    color: var(--muted);
+  }
+
+  .hero__cue {
+    position: absolute;
+    bottom: calc(1.5rem + var(--safe-b));
+    left: 50%;
+    z-index: 2;
+    width: 1.5rem;
+    height: 2.4rem;
+    margin-left: -0.75rem;
+    border: 2px solid rgba(201, 54, 87, 0.45);
+    border-radius: 99px;
+  }
+  .hero__cue span {
+    position: absolute;
+    left: 50%;
+    top: 0.45rem;
+    width: 4px;
+    height: 8px;
+    margin-left: -2px;
+    border-radius: 4px;
+    background: var(--rose-500);
+    animation: cue 1.8s ease-in-out infinite;
+  }
+  @keyframes cue {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    70%,
+    100% {
+      transform: translateY(0.9rem);
+      opacity: 0;
+    }
+  }
+
+  /* ── Entrada (empieza cuando termina el loader) ── */
+  :global(.js) .hero__in {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  :global(.js) .word__inner {
+    transform: translate3d(0, 115%, 0);
+  }
+
+  :global(.is-ready) .hero__in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 1s var(--ease-out) calc(var(--i) * 0.13s + 0.1s),
+      transform 1s var(--ease-out) calc(var(--i) * 0.13s + 0.1s);
+  }
+  :global(.is-ready) .word__inner {
+    transform: none;
+    transition: transform 1.1s var(--ease-out) calc(var(--i) * 0.14s + 0.1s);
+  }
+  /* el botón necesita su propia transición de :active */
+  :global(.is-ready) .btn.hero__in {
+    transition:
+      opacity 1s var(--ease-out) calc(var(--i) * 0.13s + 0.1s),
+      transform 1s var(--ease-out) calc(var(--i) * 0.13s + 0.1s),
+      box-shadow 0.35s var(--ease-out);
+  }
+</style>
+
+<script>
+  import { confetti } from '../scripts/confetti';
+
+  document.querySelector<HTMLElement>('[data-hero-btn]')?.addEventListener('click', (e) => {
+    const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    confetti({
+      x: (r.left + r.width / 2) / window.innerWidth,
+      y: (r.top + r.height / 2) / window.innerHeight,
+      count: 40,
+      power: 0.8,
+    });
+  });
+</script>

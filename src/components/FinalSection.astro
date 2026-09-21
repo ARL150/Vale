@@ -1,0 +1,137 @@
+---
+import { finale } from '../data/content';
+
+// El emoji va fuera del degradado para conservar su color
+const [titleText, ...rest] = finale.title.split('❤');
+const hasHeart = rest.length > 0;
+---
+
+<section class="section final" id="final" data-final>
+  <div class="fx" data-hearts="22" data-sparks="24" aria-hidden="true"></div>
+
+  <div class="container final__inner">
+    <button class="final__heart" type="button" data-reveal="scale" data-final-heart aria-label="Lanzar confeti">
+      <svg viewBox="0 0 24 24" width="96" height="96" aria-hidden="true">
+        <defs>
+          <linearGradient id="fg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ff8aa6"></stop>
+            <stop offset="1" stop-color="#c93657"></stop>
+          </linearGradient>
+        </defs>
+        <path fill="url(#fg)" d="M12 21s-7-4.6-9.3-9C.9 8.4 2.7 5 6 5c2 0 3.4 1 4.1 2.3h3.8C14.6 6 16 5 18 5c3.3 0 5.1 3.4 3.3 7-2.3 4.4-9.3 9-9.3 9z"></path>
+      </svg>
+    </button>
+    <p class="final__tap" data-reveal="fade" data-delay="300">{finale.tapHint}</p>
+
+    <h2 class="final__title" data-reveal="up" data-delay="200" aria-label={finale.title}>
+      <span class="final__grad">{titleText.trim()}</span>{hasHeart && <span class="final__emoji"> ❤️</span>}
+    </h2>
+    <p class="final__sub" data-reveal="up" data-delay="500">{finale.subtitle}</p>
+
+    <button class="btn btn--ghost final__top" type="button" data-scroll-to="top" data-reveal="up" data-delay="700">
+      {finale.backToTop}
+    </button>
+  </div>
+</section>
+
+<style>
+  .final {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    background:
+      radial-gradient(70% 45% at 50% 35%, rgba(255, 255, 255, 0.85), transparent 70%),
+      linear-gradient(180deg, var(--cream) 0%, #ffe0e8 45%, #ffbccd 100%);
+    padding-bottom: calc(6rem + var(--safe-b));
+  }
+
+  .final__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .final__heart {
+    padding: 0.5rem;
+    border-radius: 50%;
+    filter: drop-shadow(0 16px 24px rgba(201, 54, 87, 0.4));
+    animation: beat 1.7s ease-in-out infinite;
+  }
+  .final__heart:active {
+    transform: scale(0.88);
+  }
+  .final__heart:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 4px;
+  }
+
+  .final__tap {
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .final__title {
+    margin-top: 2rem;
+    font-size: clamp(2.7rem, 12.5vw, 5.2rem);
+    font-style: italic;
+    line-height: 1.05;
+    padding: 0 0.05em 0.12em;
+  }
+  .final__grad {
+    background: linear-gradient(120deg, var(--wine) 25%, var(--rose-600) 70%, var(--gold));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .final__emoji {
+    display: inline-block;
+    animation: beat 1.7s ease-in-out infinite;
+  }
+
+  .final__sub {
+    margin-top: 1rem;
+    font-family: var(--font-script);
+    font-size: clamp(2rem, 9vw, 3rem);
+    color: var(--rose-600);
+  }
+
+  .final__top {
+    margin-top: 2.8rem;
+  }
+</style>
+
+<script>
+  import { confetti, confettiRain, confettiCannons } from '../scripts/confetti';
+
+  const section = document.querySelector<HTMLElement>('[data-final]');
+  const heart = document.querySelector<HTMLElement>('[data-final-heart]');
+
+  // Celebración automática, una sola vez, al llegar al final
+  if (section) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        setTimeout(() => {
+          confettiCannons();
+          confettiRain();
+        }, 400);
+      },
+      { threshold: 0.55 },
+    );
+    io.observe(section);
+  }
+
+  // …y de nuevo cada vez que toque el corazón
+  heart?.addEventListener('click', () => {
+    const r = heart.getBoundingClientRect();
+    confetti({
+      x: (r.left + r.width / 2) / window.innerWidth,
+      y: (r.top + r.height / 2) / window.innerHeight,
+      count: 80,
+    });
+  });
+</script>

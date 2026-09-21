@@ -1,0 +1,140 @@
+---
+import { reasons } from '../data/content';
+---
+
+<section class="section reasons" id="razones">
+  <div class="fx" data-hearts="6" data-sparks="8" aria-hidden="true"></div>
+
+  <div class="container container--wide">
+    <header class="reasons__head">
+      <p class="eyebrow" data-reveal="fade">{reasons.eyebrow}</p>
+      <h2 class="section-title" data-reveal="up" data-delay="100">{reasons.title}</h2>
+      <p class="reasons__hint" data-reveal="fade" data-delay="250">{reasons.hint}</p>
+    </header>
+
+    <div class="reasons__grid">
+      {
+        reasons.items.map((text, i) => (
+          <div class="flip-wrap" data-reveal="scale" data-delay={(i % 2) * 120}>
+            <button class="flip" type="button" aria-pressed="false" data-flip>
+              <span class="face face--front">
+                <span class="face__heart" aria-hidden="true">♥</span>
+                <span class="face__num">{String(i + 1).padStart(2, '0')}</span>
+              </span>
+              <span class="face face--back">{text}</span>
+            </button>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .reasons {
+    background: linear-gradient(180deg, #fff0f3 0%, var(--rose-100) 55%, var(--cream) 100%);
+  }
+  .reasons__head {
+    text-align: center;
+    margin-bottom: 2.4rem;
+  }
+  .reasons__hint {
+    margin-top: 0.8rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  .reasons__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.9rem;
+  }
+  @media (min-width: 760px) {
+    .reasons__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.4rem;
+    }
+  }
+
+  .flip-wrap {
+    perspective: 900px;
+  }
+  .flip {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 1 / 1.05;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: transform 0.8s var(--ease-out);
+  }
+  .flip[aria-pressed='true'] {
+    transform: rotateY(180deg);
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 0.9rem;
+    border-radius: 1.5rem;
+    text-align: center;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    box-shadow: 0 16px 32px -16px rgba(201, 54, 87, 0.55);
+  }
+  .face--front {
+    align-content: center;
+    gap: 0.2rem;
+    color: #fff;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.4), transparent 55%),
+      linear-gradient(145deg, var(--rose-400), var(--rose-600));
+  }
+  .face__heart {
+    font-size: 2.6rem;
+    line-height: 1;
+    animation: beat 2s ease-in-out infinite;
+  }
+  .face__num {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    opacity: 0.9;
+  }
+  .face--back {
+    transform: rotateY(180deg);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(1.02rem, 4.4vw, 1.25rem);
+    line-height: 1.25;
+    color: var(--wine);
+    background: linear-gradient(160deg, #fffdf8, #fff0dc);
+    border: 1px solid var(--gold-soft);
+  }
+
+  .flip:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 4px;
+    border-radius: 1.5rem;
+  }
+</style>
+
+<script>
+  import { popHearts } from '../scripts/effects';
+
+  document.querySelectorAll<HTMLButtonElement>('[data-flip]').forEach((el) => {
+    el.addEventListener('click', (e) => {
+      const on = el.getAttribute('aria-pressed') !== 'true';
+      el.setAttribute('aria-pressed', String(on));
+      if (on) {
+        const r = el.getBoundingClientRect();
+        const ev = e as MouseEvent;
+        popHearts(ev.clientX || r.left + r.width / 2, ev.clientY || r.top + r.height / 2, 2);
+      }
+    });
+  });
+</script>

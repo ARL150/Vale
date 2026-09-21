@@ -1,0 +1,97 @@
+---
+import { story } from '../data/content';
+---
+
+<section class="section story" id="historia">
+  <div class="container">
+    <header class="story__head">
+      <p class="eyebrow" data-reveal="fade">{story.eyebrow}</p>
+      <h2 class="section-title" data-reveal="up" data-delay="100">{story.title}</h2>
+    </header>
+
+    <ol class="timeline">
+      {
+        story.events.map((ev, i) => (
+          <li class="event" data-reveal={i % 2 === 0 ? 'left' : 'right'}>
+            <span class="event__dot" aria-hidden="true">{ev.icon}</span>
+            <div class="event__card glass">
+              <time class="event__date">{ev.date}</time>
+              <h3>{ev.title}</h3>
+              <p>{ev.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .story {
+    background: linear-gradient(180deg, var(--cream) 0%, #fff0f3 100%);
+  }
+  .story__head {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .timeline {
+    position: relative;
+    list-style: none;
+    display: grid;
+    gap: 1.6rem;
+    padding-left: 3.4rem;
+  }
+  /* línea vertical */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 1.25rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--rose-300), var(--gold) 50%, var(--rose-300));
+  }
+
+  .event {
+    position: relative;
+  }
+  .event__dot {
+    position: absolute;
+    left: -3.4rem;
+    top: 0.6rem;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border-radius: 50%;
+    font-size: 1.15rem;
+    background: #fff;
+    border: 2px solid var(--rose-300);
+    box-shadow: 0 8px 18px -8px rgba(201, 54, 87, 0.5);
+  }
+  .event__card {
+    padding: 1.2rem 1.3rem 1.3rem;
+    border-radius: 1.4rem;
+  }
+  .event__date {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .event h3 {
+    margin-top: 0.35rem;
+    font-size: 1.6rem;
+    font-style: italic;
+    color: var(--wine);
+  }
+  .event p {
+    margin-top: 0.4rem;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+</style>

@@ -1,0 +1,89 @@
+---
+import { message } from '../data/content';
+---
+
+<section class="section message" id="para-ti">
+  <div class="message__glow" aria-hidden="true"></div>
+  <div class="fx" data-sparks="10" aria-hidden="true"></div>
+
+  <div class="container">
+    <article class="card glass" data-reveal="up">
+      <span class="card__seal" aria-hidden="true">❤</span>
+      <p class="eyebrow" data-reveal="fade" data-delay="200">{message.eyebrow}</p>
+      <h2 class="section-title" data-reveal="up" data-delay="250">{message.title}</h2>
+
+      <div class="card__body">
+        {
+          message.paragraphs.map((p, i) => (
+            <p data-reveal="up" data-delay={380 + i * 160}>
+              {p}
+            </p>
+          ))
+        }
+      </div>
+
+      <p class="card__sign" data-reveal="up" data-delay="800">{message.signature} ✦</p>
+    </article>
+  </div>
+</section>
+
+<style>
+  .message {
+    background: linear-gradient(180deg, #fff1de 0%, var(--cream) 30%, var(--rose-50) 100%);
+  }
+
+  .message__glow {
+    position: absolute;
+    width: 26rem;
+    height: 26rem;
+    top: 8%;
+    left: 50%;
+    margin-left: -13rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 171, 192, 0.45), transparent 68%);
+  }
+
+  .card {
+    position: relative;
+    padding: 3.2rem 1.6rem 2.2rem;
+    text-align: center;
+  }
+
+  .card__seal {
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    margin-left: -1.5rem;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--rose-400), var(--rose-600));
+    box-shadow: 0 10px 22px -8px rgba(201, 54, 87, 0.7);
+    animation: beat 2s ease-in-out infinite;
+  }
+
+  .card__body {
+    display: grid;
+    gap: 1.1rem;
+    margin-top: 1.4rem;
+    font-size: clamp(1.02rem, 4vw, 1.15rem);
+    color: var(--ink);
+  }
+
+  .card__sign {
+    margin-top: 1.8rem;
+    font-family: var(--font-script);
+    font-size: 1.7rem;
+    color: var(--rose-500);
+  }
+
+  @media (min-width: 640px) {
+    .card {
+      padding: 3.6rem 3rem 2.8rem;
+    }
+  }
+</style>

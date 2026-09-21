@@ -1,0 +1,165 @@
+---
+import { music } from '../data/content';
+---
+
+<button class="music icon-btn" type="button" aria-label="Activar música" aria-pressed="false" data-music data-src={music.src} data-volume={music.volume}>
+  <span class="music__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+  <svg class="music__icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 18V5l11-2v13"></path>
+    <circle cx="6" cy="18" r="3"></circle>
+    <circle cx="17" cy="16" r="3"></circle>
+    <path class="music__slash" d="M3 3l18 18"></path>
+  </svg>
+</button>
+
+<style>
+  .music {
+    position: fixed;
+    z-index: 50;
+    right: calc(1rem + var(--safe-r));
+    bottom: calc(1rem + var(--safe-b));
+    display: grid;
+    place-items: center;
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    color: var(--rose-600);
+    background: rgba(255, 255, 255, 0.75);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 12px 28px -10px rgba(201, 54, 87, 0.5);
+    transition: transform 0.3s var(--ease-out), opacity 0.6s;
+    /* aparece cuando termina el loader */
+    opacity: 0;
+    pointer-events: none;
+  }
+  :global(.is-ready) .music {
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0.8s, 0.8s;
+  }
+  .music[hidden] {
+    display: none;
+  }
+  .music:active {
+    transform: scale(0.9);
+  }
+
+  .music__slash {
+    transition: opacity 0.2s;
+  }
+  .music[aria-pressed='true'] .music__slash {
+    opacity: 0;
+  }
+  .music[aria-pressed='true'] .music__icon {
+    display: none;
+  }
+
+  .music__bars {
+    display: none;
+    align-items: flex-end;
+    gap: 3px;
+    height: 16px;
+  }
+  .music[aria-pressed='true'] .music__bars {
+    display: flex;
+  }
+  .music__bars i {
+    width: 3px;
+    height: 100%;
+    border-radius: 2px;
+    background: currentColor;
+    transform-origin: bottom;
+    animation: eq 0.9s ease-in-out infinite;
+  }
+  .music__bars i:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .music__bars i:nth-child(3) {
+    animation-delay: -0.6s;
+  }
+  @keyframes eq {
+    0%,
+    100% {
+      transform: scaleY(0.3);
+    }
+    50% {
+      transform: scaleY(1);
+    }
+  }
+</style>
+
+<script>
+  import { MusicBox } from '../scripts/musicbox';
+
+  const btn = document.querySelector<HTMLButtonElement>('[data-music]');
+
+  if (btn) {
+    const volume = Number(btn.dataset.volume ?? 0.6);
+    let audio: HTMLAudioElement | null = null; // canción mp3 (si existe)
+    let box: MusicBox | null = null; // cajita de música integrada
+    let useBox = !btn.dataset.src;
+    let playing = false;
+    let resumeAfterHidden = false;
+
+    const setState = (on: boolean) => {
+      playing = on;
+      btn.setAttribute('aria-pressed', String(on));
+      btn.setAttribute('aria-label', on ? 'Silenciar música' : 'Activar música');
+    };
+
+    const playBox = async () => {
+      box ??= new MusicBox(volume * 0.9);
+      await box.start();
+    };
+
+    const play = async () => {
+      if (!useBox) {
+        if (!audio) {
+          audio = new Audio(btn.dataset.src);
+          audio.loop = true;
+          audio.volume = volume;
+        }
+        try {
+          await audio.play();
+          return;
+        } catch {
+          // no hay mp3 (o no se pudo cargar): usa la cajita de música
+          useBox = true;
+        }
+      }
+      await playBox();
+    };
+
+    const pause = () => {
+      audio?.pause();
+      box?.stop();
+    };
+
+    btn.addEventListener('click', async () => {
+      if (playing) {
+        pause();
+        setState(false);
+        return;
+      }
+      try {
+        await play();
+        setState(true);
+      } catch {
+        setState(false);
+      }
+    });
+
+    // Pausa al cambiar de pestaña / bloquear el celular
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && playing) {
+        resumeAfterHidden = true;
+        pause();
+      } else if (!document.hidden && resumeAfterHidden) {
+        resumeAfterHidden = false;
+        play().catch(() => setState(false));
+      }
+    });
+  }
+</script>

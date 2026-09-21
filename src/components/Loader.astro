@@ -1,0 +1,203 @@
+---
+import { loader } from '../data/content';
+---
+
+<div class="loader" data-loader role="status" aria-live="polite">
+  <div class="loader__panel loader__panel--top"></div>
+  <div class="loader__panel loader__panel--bottom"></div>
+
+  <div class="fx" data-hearts="12" data-sparks="14"></div>
+
+  <div class="loader__content">
+    <div class="loader__heart" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="64" height="64">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ff8aa6"></stop>
+            <stop offset="1" stop-color="#c93657"></stop>
+          </linearGradient>
+        </defs>
+        <path
+          fill="url(#lg)"
+          d="M12 21s-7-4.6-9.3-9C.9 8.4 2.7 5 6 5c2 0 3.4 1 4.1 2.3h3.8C14.6 6 16 5 18 5c3.3 0 5.1 3.4 3.3 7-2.3 4.4-9.3 9-9.3 9z"
+        ></path>
+      </svg>
+    </div>
+
+    <div class="loader__texts">
+      <p class="loader__text loader__text--first">{loader.first}</p>
+      <p class="loader__text loader__text--second">{loader.second}</p>
+    </div>
+
+    <div class="loader__bar" aria-hidden="true">
+      <div class="loader__bar-fill"></div>
+    </div>
+  </div>
+</div>
+
+<noscript><style>.loader{display:none!important}</style></noscript>
+
+<style>
+  .loader {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 1.5rem;
+    overflow: hidden;
+  }
+
+  .loader__panel {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 50.5%;
+    background: radial-gradient(120% 90% at 50% 50%, #fff6f8 0%, #ffe6ec 60%, #ffd6e0 100%);
+    transition: transform 1s var(--ease-out) 0.35s;
+    will-change: transform;
+  }
+  .loader__panel--top {
+    top: 0;
+  }
+  .loader__panel--bottom {
+    bottom: 0;
+    background: radial-gradient(120% 90% at 50% 50%, #fff6f8 0%, #ffe6ec 60%, #ffd6e0 100%);
+  }
+
+  .loader__content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.6rem;
+    text-align: center;
+    width: 100%;
+    max-width: 22rem;
+    transition: opacity 0.5s var(--ease-soft), transform 0.7s var(--ease-out);
+  }
+
+  .loader__heart {
+    animation: beat 1.4s ease-in-out infinite;
+    filter: drop-shadow(0 10px 18px rgba(201, 54, 87, 0.35));
+  }
+
+  .loader__texts {
+    position: relative;
+    display: grid;
+    width: 100%;
+    min-height: 4.6rem;
+  }
+
+  .loader__text {
+    grid-area: 1 / 1;
+    align-self: center;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 7vw, 2.1rem);
+    line-height: 1.15;
+    color: var(--wine);
+    transition: opacity 0.7s var(--ease-soft), transform 0.7s var(--ease-out);
+  }
+
+  .loader__text--second {
+    opacity: 0;
+    transform: translateY(14px);
+    color: var(--rose-600);
+  }
+
+  .loader.phase-2 .loader__text--first {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  .loader.phase-2 .loader__text--second {
+    opacity: 1;
+    transform: none;
+  }
+
+  .loader__bar {
+    width: min(70%, 15rem);
+    height: 5px;
+    border-radius: 99px;
+    background: rgba(201, 54, 87, 0.15);
+    overflow: hidden;
+  }
+
+  .loader__bar-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--gold), var(--rose-400), var(--rose-600));
+    transform: scaleX(0);
+    transform-origin: left;
+    will-change: transform;
+  }
+
+  /* Salida: contenido se desvanece y el telón se abre */
+  .loader.is-leaving .loader__content {
+    opacity: 0;
+    transform: scale(1.12);
+  }
+  .loader.is-leaving .loader__panel--top {
+    transform: translate3d(0, -101%, 0);
+  }
+  .loader.is-leaving .loader__panel--bottom {
+    transform: translate3d(0, 101%, 0);
+  }
+  .loader.is-leaving .fx {
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+</style>
+
+<script>
+  const loader = document.querySelector<HTMLElement>('[data-loader]');
+  const root = document.documentElement;
+
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+
+  const finish = () => {
+    root.classList.remove('is-loading');
+    root.classList.add('is-ready');
+    loader?.remove();
+  };
+
+  if (!loader) {
+    finish();
+  } else {
+    const fill = loader.querySelector<HTMLElement>('.loader__bar-fill')!;
+    const TOTAL = 2900; // duración total ≈ 3 s
+    const SWITCH = 1700; // cambia al segundo texto
+    const start = performance.now();
+    let switched = false;
+    let leaving = false;
+
+    const frame = (now: number) => {
+      const t = Math.min((now - start) / TOTAL, 1);
+      // easing: arranca rápido y suaviza al final
+      const eased = 1 - Math.pow(1 - t, 2.2);
+      fill.style.transform = `scaleX(${eased.toFixed(3)})`;
+
+      if (!switched && now - start >= SWITCH) {
+        switched = true;
+        loader.classList.add('phase-2');
+      }
+
+      if (t < 1) {
+        requestAnimationFrame(frame);
+      } else if (!leaving) {
+        leaving = true;
+        loader.classList.add('is-leaving');
+        // La página principal empieza a animarse mientras el telón se abre
+        setTimeout(() => {
+          root.classList.add('is-ready');
+          root.classList.remove('is-loading');
+        }, 350);
+        setTimeout(() => loader.remove(), 1500);
+      }
+    };
+    requestAnimationFrame(frame);
+  }
+</script>

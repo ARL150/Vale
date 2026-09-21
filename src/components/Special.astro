@@ -1,0 +1,226 @@
+---
+import { special } from '../data/content';
+
+const units = [
+  { key: 'days', label: 'días' },
+  { key: 'hours', label: 'horas' },
+  { key: 'minutes', label: 'minutos' },
+  { key: 'seconds', label: 'segundos' },
+];
+---
+
+<section class="section special" id="comienza">
+  <div class="special__glow" aria-hidden="true" data-parallax="0.08"></div>
+  <div class="fx" data-hearts="8" data-sparks="26" aria-hidden="true"></div>
+
+  <div class="container special__inner">
+    <div class="special__heart" data-reveal="scale" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="84" height="84">
+        <defs>
+          <linearGradient id="sg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f4e0a9"></stop>
+            <stop offset="0.5" stop-color="#ff8aa6"></stop>
+            <stop offset="1" stop-color="#e8506a"></stop>
+          </linearGradient>
+        </defs>
+        <path fill="url(#sg)" d="M12 21s-7-4.6-9.3-9C.9 8.4 2.7 5 6 5c2 0 3.4 1 4.1 2.3h3.8C14.6 6 16 5 18 5c3.3 0 5.1 3.4 3.3 7-2.3 4.4-9.3 9-9.3 9z"></path>
+      </svg>
+    </div>
+
+    <h2 class="special__title" data-reveal="up" data-delay="100">{special.title}</h2>
+
+    <p class="special__label" data-reveal="fade" data-delay="250">{special.counterLabel}</p>
+
+    <div class="counter" data-counter data-since={special.since} data-reveal="up" data-delay="350">
+      {
+        units.map((u) => (
+          <div class="counter__unit">
+            <span class="counter__num" data-unit={u.key}>
+              0
+            </span>
+            <span class="counter__label">{u.label}</span>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="special__phrase" data-reveal="up" data-delay="500">{special.phrase}</p>
+  </div>
+</section>
+
+<style>
+  .special {
+    color: var(--cream);
+    text-align: center;
+    background:
+      radial-gradient(80% 50% at 50% 40%, rgba(232, 80, 106, 0.28), transparent 70%),
+      linear-gradient(180deg, var(--cream) 0%, #b9647a 9%, var(--wine) 26%, var(--wine-deep) 100%);
+    padding-block: clamp(7rem, 20vw, 11rem);
+  }
+
+  .special__glow {
+    position: absolute;
+    width: 28rem;
+    height: 28rem;
+    top: 30%;
+    left: 50%;
+    margin-left: -14rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212, 168, 75, 0.22), transparent 65%);
+    will-change: transform;
+  }
+
+  .special__heart {
+    display: inline-block;
+    margin-bottom: 1.2rem;
+    filter: drop-shadow(0 0 24px rgba(255, 138, 166, 0.55));
+  }
+  .special__heart svg {
+    animation: beat 1.8s ease-in-out infinite;
+  }
+
+  .special__title {
+    font-size: clamp(2.4rem, 10vw, 4rem);
+    font-style: italic;
+    background: linear-gradient(120deg, #fff 20%, var(--gold-soft) 60%, var(--rose-300));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-bottom: 0.1em;
+  }
+
+  .special__label {
+    margin-top: 1.8rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold-soft);
+  }
+
+  .counter {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+  }
+  @media (min-width: 480px) {
+    .counter {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .counter__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.1rem 0.4rem;
+    border-radius: 1.4rem;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  .counter__num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.4rem, 11vw, 3.2rem);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: #fff;
+  }
+  .counter__label {
+    margin-top: 0.4rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rose-200);
+  }
+
+  .special__phrase {
+    margin-top: 2.6rem;
+    font-family: var(--font-script);
+    font-size: clamp(1.7rem, 7vw, 2.4rem);
+    line-height: 1.3;
+    color: var(--rose-200);
+  }
+</style>
+
+<script>
+  const counter = document.querySelector<HTMLElement>('[data-counter]');
+
+  if (counter?.dataset.since) {
+    const since = new Date(`${counter.dataset.since}T00:00:00`).getTime();
+    const els = {
+      days: counter.querySelector<HTMLElement>('[data-unit="days"]')!,
+      hours: counter.querySelector<HTMLElement>('[data-unit="hours"]')!,
+      minutes: counter.querySelector<HTMLElement>('[data-unit="minutes"]')!,
+      seconds: counter.querySelector<HTMLElement>('[data-unit="seconds"]')!,
+    };
+    const fmt = new Intl.NumberFormat('es');
+
+    const compute = () => {
+      const diff = Math.max(0, Date.now() - since);
+      const s = Math.floor(diff / 1000);
+      return {
+        days: Math.floor(s / 86400),
+        hours: Math.floor((s % 86400) / 3600),
+        minutes: Math.floor((s % 3600) / 60),
+        seconds: s % 60,
+      };
+    };
+
+    const write = (v: Record<string, number>) => {
+      (Object.keys(els) as (keyof typeof els)[]).forEach((k) => {
+        const text = k === 'days' ? fmt.format(v[k]) : String(v[k]).padStart(2, '0');
+        if (els[k].textContent !== text) els[k].textContent = text;
+      });
+    };
+
+    let timer = 0;
+    const live = () => {
+      write(compute());
+      timer = window.setTimeout(live, 1000 - (Date.now() % 1000));
+    };
+
+    // Cuenta desde 0 la primera vez que se ve, luego sigue en vivo
+    const countUp = () => {
+      const target = compute();
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce) return live();
+      const t0 = performance.now();
+      const DUR = 1800;
+      const step = (now: number) => {
+        const p = Math.min((now - t0) / DUR, 1);
+        const e = 1 - Math.pow(1 - p, 3);
+        write({
+          days: Math.round(target.days * e),
+          hours: Math.round(target.hours * e),
+          minutes: Math.round(target.minutes * e),
+          seconds: Math.round(target.seconds * e),
+        });
+        if (p < 1) requestAnimationFrame(step);
+        else live();
+      };
+      requestAnimationFrame(step);
+    };
+
+    // Solo corre mientras la sección está visible
+    let started = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries[0].isIntersecting;
+        if (visible && !started) {
+          started = true;
+          countUp();
+        } else if (visible && started && !timer) {
+          live();
+        } else if (!visible) {
+          clearTimeout(timer);
+          timer = 0;
+        }
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(counter);
+  }
+</script>
