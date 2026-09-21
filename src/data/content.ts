@@ -105,7 +105,7 @@ export const game = {
   prize: {
     label: 'Cupón de premio',
     title: 'Una cita a tu elección',
-    text: 'Tú escoges el plan y yo pongo todo lo demás. Incluye abrazo gigante y postre.',
+    text: 'Tú escoges el plan y yo pongo todo lo demás. Incluye abrazo gigante y, de postre, yo 😏',
     note: 'Válido por siempre · Canjéalo con Abraham Robledo 😘',
   },
 };
