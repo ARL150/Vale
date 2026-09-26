@@ -260,10 +260,10 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     justify-content: center;
     gap: 0.3rem;
     margin-top: 1.8rem;
-    padding: 1.15rem 0.6rem;
+    padding: 1.1rem 0.6rem;
     border-radius: 1.4rem;
-    background: linear-gradient(165deg, #3a1220 0%, #200a13 100%);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 0 0 1.5px rgba(255, 138, 166, 0.18), 0 18px 30px -16px rgba(32, 10, 19, 0.75);
+    background: linear-gradient(135deg, var(--rose-400), var(--rose-500) 55%, var(--rose-600));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 16px 28px -14px rgba(201, 54, 87, 0.6);
     position: relative;
     overflow: hidden;
   }
@@ -272,7 +272,7 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(100deg, transparent 40%, rgba(255, 255, 255, 0.1) 50%, transparent 60%);
+    background: linear-gradient(100deg, transparent 40%, rgba(255, 255, 255, 0.35) 50%, transparent 60%);
     transform: translateX(-120%);
     animation: countdownShine 5s ease-in-out 1s infinite;
   }
@@ -300,8 +300,8 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     font-size: clamp(1.6rem, 7vw, 2rem);
     line-height: 1;
     font-variant-numeric: tabular-nums;
-    color: #fff8f2;
-    text-shadow: 0 0 14px rgba(255, 138, 166, 0.55);
+    color: #fff;
+    text-shadow: 0 2px 6px rgba(120, 20, 45, 0.35);
     transition: transform 0.25s var(--ease-out);
   }
   .lock__num.is-tick {
@@ -333,8 +333,7 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     font-family: var(--font-display);
     font-weight: 700;
     font-size: clamp(1.3rem, 5.5vw, 1.6rem);
-    color: var(--rose-400);
-    opacity: 0.85;
+    color: rgba(255, 255, 255, 0.75);
     position: relative;
     z-index: 1;
   }
