@@ -4,7 +4,6 @@ import { site, lock, og, deployUrl } from '../data/content';
 import Lock from '../components/Lock.astro';
 import Loader from '../components/Loader.astro';
 import MusicButton from '../components/MusicButton.astro';
-import ShareButton from '../components/ShareButton.astro';
 
 const favicon =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9D%A4%EF%B8%8F%3C/text%3E%3C/svg%3E";
@@ -45,12 +44,14 @@ const ogImage = `${deployUrl}${og.image}`;
         var root = document.documentElement;
         root.classList.add('js', 'is-loading');
         try {
-          var unlocked = localStorage.getItem('valecita-unlocked') === '1';
+          // limpia cualquier desbloqueo recordado de una versión anterior:
+          // el candado ya no se acuerda entre recargas, solo la fecha real lo abre.
+          localStorage.removeItem('valecita-unlocked');
           var now = new Date();
           var target = new Date(now.getFullYear(), month - 1, day, 0, 0, 0);
-          if (!unlocked && now.getTime() < target.getTime()) root.classList.add('is-locked');
+          if (now.getTime() < target.getTime()) root.classList.add('is-locked');
         } catch (e) {
-          /* sin localStorage: se comporta como si no hubiera guardado nada */
+          /* sin localStorage: se comporta igual, sin nada que limpiar */
         }
       })();
     </script>
@@ -63,7 +64,6 @@ const ogImage = `${deployUrl}${og.image}`;
         <slot />
       </main>
       <MusicButton />
-      <ShareButton />
       <script>
         import '../scripts/effects';
       </script>

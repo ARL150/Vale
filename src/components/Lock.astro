@@ -13,24 +13,30 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
   data-messages={JSON.stringify(lock.wrongMessages)}
   aria-hidden="true"
 >
-  <div class="fx" data-hearts="10" data-sparks="16" aria-hidden="true"></div>
+  <div class="fx" data-hearts="12" data-sparks="18" aria-hidden="true"></div>
   <div class="lock__glow" aria-hidden="true"></div>
+  <div class="lock__glow lock__glow--b" aria-hidden="true"></div>
 
   <div class="lock__panel glass">
-    <div class="lock__icon" data-lock-icon aria-hidden="true">
-      <svg viewBox="0 0 100 116" width="72" height="84">
-        <defs>
-          <linearGradient id="lockGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#ff8aa6"></stop>
-            <stop offset="1" stop-color="#c93657"></stop>
-          </linearGradient>
-        </defs>
-        <path class="lock__shackle" d="M32 52V36a18 18 0 0 1 36 0v16" fill="none" stroke="url(#lockGrad)" stroke-width="11" stroke-linecap="round"></path>
-        <rect class="lock__body" x="18" y="48" width="64" height="58" rx="12" fill="url(#lockGrad)"></rect>
-        <circle cx="50" cy="74" r="6.5" fill="#fff" opacity="0.9"></circle>
-        <rect x="47" y="77" width="6" height="15" rx="3" fill="#fff" opacity="0.9"></rect>
-      </svg>
+    <div class="lock__badge">
+      <div class="lock__ring" aria-hidden="true"></div>
+      <div class="lock__icon" data-lock-icon aria-hidden="true">
+        <svg viewBox="0 0 100 116" width="64" height="74">
+          <defs>
+            <linearGradient id="lockGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#ff8aa6"></stop>
+              <stop offset="1" stop-color="#c93657"></stop>
+            </linearGradient>
+          </defs>
+          <path class="lock__shackle" d="M32 52V36a18 18 0 0 1 36 0v16" fill="none" stroke="url(#lockGrad)" stroke-width="11" stroke-linecap="round"></path>
+          <rect class="lock__body" x="18" y="48" width="64" height="58" rx="12" fill="url(#lockGrad)"></rect>
+          <circle cx="50" cy="74" r="6.5" fill="#fff" opacity="0.9"></circle>
+          <rect x="47" y="77" width="6" height="15" rx="3" fill="#fff" opacity="0.9"></rect>
+        </svg>
+      </div>
     </div>
+
+    <p class="lock__eyebrow">Shhh...</p>
     <h1 class="lock__title">{lock.title}</h1>
     <p class="lock__subtitle">{lock.subtitle}</p>
 
@@ -46,6 +52,8 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
         ))
       }
     </div>
+
+    <div class="lock__divider" aria-hidden="true"><span></span></div>
 
     <form class="lock__form" data-lock-form autocomplete="off">
       <input
@@ -82,11 +90,21 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     position: absolute;
     width: 24rem;
     height: 24rem;
-    top: 10%;
+    top: 6%;
     left: 50%;
     margin-left: -12rem;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 171, 192, 0.45), transparent 68%);
+    background: radial-gradient(circle, rgba(255, 171, 192, 0.5), transparent 68%);
+  }
+  .lock__glow--b {
+    top: auto;
+    bottom: -6%;
+    left: auto;
+    right: -4rem;
+    margin-left: 0;
+    width: 18rem;
+    height: 18rem;
+    background: radial-gradient(circle, rgba(244, 224, 169, 0.55), transparent 68%);
   }
 
   .lock__panel {
@@ -94,12 +112,54 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     z-index: 2;
     width: 100%;
     max-width: 24rem;
-    padding: 2.6rem 1.6rem 2.2rem;
+    padding: 2.8rem 1.7rem 2.3rem;
     text-align: center;
+    overflow: hidden;
+  }
+  /* filete dorado en el borde superior, para que no sea una glass card genérica */
+  .lock__panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 12%;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.8;
+  }
+
+  .lock__badge {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    width: 6.5rem;
+    height: 6.5rem;
+    margin-bottom: 0.6rem;
+  }
+  .lock__ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.9), rgba(255, 214, 224, 0.55) 70%, transparent 72%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+    animation: ringPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes ringPulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.08);
+      opacity: 0.85;
+    }
   }
 
   .lock__icon {
-    margin-bottom: 0.9rem;
+    position: relative;
+    z-index: 1;
     filter: drop-shadow(0 10px 16px rgba(201, 54, 87, 0.35));
     animation: beat 2.2s ease-in-out infinite;
   }
@@ -108,22 +168,31 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     transform-origin: 100% 100%;
     transition: transform 0.6s var(--ease-out);
   }
-  .lock.is-unlocking .lock__icon {
+  .lock.is-unlocking .lock__icon,
+  .lock.is-unlocking .lock__ring {
     animation: none;
   }
   .lock.is-unlocking .lock__shackle {
     transform: translate(-3px, -9px) rotate(-32deg);
   }
 
+  .lock__eyebrow {
+    font-family: var(--font-script);
+    font-size: 1.7rem;
+    line-height: 1;
+    color: var(--rose-500);
+    margin-bottom: 0.3rem;
+  }
+
   .lock__title {
-    font-size: clamp(1.5rem, 6.5vw, 1.85rem);
+    font-size: clamp(1.4rem, 6.2vw, 1.7rem);
     font-style: italic;
     color: var(--wine);
   }
 
   .lock__subtitle {
-    margin-top: 0.7rem;
-    font-size: 0.95rem;
+    margin-top: 0.6rem;
+    font-size: 0.92rem;
     line-height: 1.5;
     color: var(--muted);
   }
@@ -132,54 +201,70 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
-    margin-top: 1.6rem;
+    margin-top: 1.7rem;
   }
   .lock__unit {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0.75rem 0.2rem;
+    padding: 0.8rem 0.2rem 0.7rem;
     border-radius: 1.1rem;
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.85), rgba(255, 230, 236, 0.6));
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 16px -12px rgba(201, 54, 87, 0.5);
   }
   .lock__num {
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(1.5rem, 6.5vw, 1.9rem);
+    font-size: clamp(1.45rem, 6.2vw, 1.8rem);
     line-height: 1;
     font-variant-numeric: tabular-nums;
-    color: var(--rose-600);
+    background: linear-gradient(135deg, var(--wine) 20%, var(--rose-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
   .lock__unit-label {
-    margin-top: 0.3rem;
-    font-size: 0.68rem;
+    margin-top: 0.35rem;
+    font-size: 0.65rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--muted);
   }
 
+  .lock__divider {
+    display: flex;
+    align-items: center;
+    margin-top: 1.8rem;
+  }
+  .lock__divider span {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201, 54, 87, 0.2), transparent);
+  }
+
   .lock__form {
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
-    margin-top: 1.8rem;
+    gap: 0.85rem;
+    margin-top: 1.4rem;
   }
   .lock__input {
     width: 100%;
     padding: 0.9rem 1rem;
     border-radius: 999px;
     border: 1px solid var(--rose-200);
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
     text-align: center;
     font-size: 1.3rem;
     letter-spacing: 0.5em;
     color: var(--wine);
+    transition: border-color 0.25s, box-shadow 0.25s;
   }
   .lock__input:focus {
     outline: none;
     border-color: var(--rose-400);
-    box-shadow: 0 0 0 3px rgba(255, 138, 166, 0.25);
+    box-shadow: 0 0 0 4px rgba(255, 138, 166, 0.22);
   }
   .lock__input::placeholder {
     letter-spacing: 0.5em;
@@ -187,16 +272,22 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
   }
 
   .lock__error {
-    margin-top: 0.9rem;
-    min-height: 1.2em;
-    font-size: 0.88rem;
+    display: inline-block;
+    margin: 0.9rem auto 0;
+    padding: 0.5rem 1rem;
+    max-width: 100%;
+    border-radius: 999px;
+    background: rgba(232, 80, 106, 0.12);
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--rose-600);
     opacity: 0;
-    transition: opacity 0.3s;
+    transform: translateY(4px) scale(0.97);
+    transition: opacity 0.3s var(--ease-out), transform 0.3s var(--ease-out);
   }
   .lock__error.is-visible {
     opacity: 1;
+    transform: none;
   }
 
   .lock.is-shaking .lock__panel {
@@ -243,8 +334,9 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
 
   const root = document.documentElement;
   const el = document.querySelector<HTMLElement>('[data-lock]');
-  const STORAGE_KEY = 'valecita-unlocked';
 
+  // El desbloqueo por contraseña dura solo mientras la pestaña está abierta:
+  // si recargas, vuelve a pedirla. Solo la fecha real la abre para siempre.
   const reached = () => {
     if (!el) return true;
     const now = new Date();
@@ -252,20 +344,7 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     return now.getTime() >= target.getTime();
   };
 
-  const isUnlocked = () => {
-    try {
-      return localStorage.getItem(STORAGE_KEY) === '1';
-    } catch {
-      return false;
-    }
-  };
-
   const finishUnlock = (celebrate: boolean) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, '1');
-    } catch {
-      /* almacenamiento no disponible: no pasa nada, solo no se recuerda para la próxima */
-    }
     root.classList.remove('is-locked');
     window.dispatchEvent(new Event('site:unlocked'));
     if (!el) return;
@@ -282,10 +361,10 @@ const units: (keyof typeof lock.units)[] = ['days', 'hours', 'minutes', 'seconds
     }
   };
 
-  // Ya estaba desbloqueada o la fecha ya llegó: no muestra nada.
+  // La fecha ya llegó: no muestra nada.
   if (!el) {
     // sin candado en el DOM, nada que hacer
-  } else if (isUnlocked() || reached()) {
+  } else if (reached()) {
     finishUnlock(false);
   } else {
     // ── Cuenta regresiva en vivo ──

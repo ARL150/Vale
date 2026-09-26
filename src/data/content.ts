@@ -57,12 +57,6 @@ export const og = {
   image: '/og-cover.jpg',
 };
 
-export const share = {
-  button: 'Compartir con ella 💌',
-  /** Mensaje que se abre en WhatsApp junto con el link de la página */
-  text: 'Hice esto especialmente para ti, mi amor. Feliz cumpleaños ❤️',
-};
-
 export const revisit = {
   title: 'Revive los momentos',
   /** `icon` es una llave (no un emoji): 'mail' | 'photo' | 'book' | 'star' | 'game' | 'heart' */
