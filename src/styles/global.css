@@ -45,8 +45,15 @@ html {
   background: var(--cream);
 }
 
-html.is-loading {
+html.is-loading,
+html.is-locked {
   overflow: hidden;
+}
+
+/* Mientras está bloqueada, el sitio real queda fuera de pantalla pero sus
+   scripts siguen registrados (ver Lock.astro y el evento "site:unlocked"). */
+html.is-locked .site {
+  display: none;
 }
 
 body {

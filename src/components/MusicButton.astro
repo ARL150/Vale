@@ -137,7 +137,53 @@ import { music } from '../data/content';
       box?.stop();
     };
 
+    // ── Intenta sonar sola desde el inicio ──
+    // Si el navegador la bloquea (Safari/Chrome no dejan autoplay con sonido
+    // sin gesto del usuario), queda armada para arrancar en el primer toque
+    // en cualquier parte de la página (menos en este mismo botón, que ya
+    // tiene su propio manejo más abajo).
+    const AUTOPLAY_EVENTS = ['pointerdown', 'touchstart', 'keydown'] as const;
+    let autoplayArmed = true;
+
+    const disarmAutoplay = () => {
+      if (!autoplayArmed) return;
+      autoplayArmed = false;
+      AUTOPLAY_EVENTS.forEach((ev) => document.removeEventListener(ev, startOnFirstTouch));
+    };
+
+    function startOnFirstTouch(e: Event) {
+      if (!autoplayArmed) return;
+      if ((e.target as HTMLElement)?.closest?.('[data-music]')) return;
+      disarmAutoplay();
+      if (playing) return;
+      play()
+        .then(() => setState(true))
+        .catch(() => {});
+    }
+
+    const bootAutoplay = () => {
+      AUTOPLAY_EVENTS.forEach((ev) => document.addEventListener(ev, startOnFirstTouch, { passive: true }));
+      (async () => {
+        try {
+          await play();
+          setState(true);
+          disarmAutoplay();
+        } catch {
+          // sigue armada esperando el primer toque
+        }
+      })();
+    };
+
+    // Mientras la página está bloqueada (ver Lock.astro) no debe sonar nada,
+    // ni siquiera al teclear la contraseña; espera a que se desbloquee.
+    if (document.documentElement.classList.contains('is-locked')) {
+      window.addEventListener('site:unlocked', bootAutoplay, { once: true });
+    } else {
+      bootAutoplay();
+    }
+
     btn.addEventListener('click', async () => {
+      disarmAutoplay();
       if (playing) {
         pause();
         setState(false);

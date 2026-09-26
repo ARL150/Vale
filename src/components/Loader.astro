@@ -155,18 +155,21 @@ import { loader } from '../data/content';
   const loader = document.querySelector<HTMLElement>('[data-loader]');
   const root = document.documentElement;
 
-  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  window.scrollTo(0, 0);
-
   const finish = () => {
     root.classList.remove('is-loading');
     root.classList.add('is-ready');
     loader?.remove();
   };
 
-  if (!loader) {
-    finish();
-  } else {
+  const boot = () => {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    window.scrollTo(0, 0);
+
+    if (!loader) {
+      finish();
+      return;
+    }
+
     const fill = loader.querySelector<HTMLElement>('.loader__bar-fill')!;
     const TOTAL = 2900; // duración total ≈ 3 s
     const SWITCH = 1700; // cambia al segundo texto
@@ -199,5 +202,14 @@ import { loader } from '../data/content';
       }
     };
     requestAnimationFrame(frame);
+  };
+
+  // Si la página está bloqueada (ver Lock.astro), el loader espera a que se
+  // desbloquee para arrancar; así siempre se ve fresco, aunque el candado
+  // haya estado abierto en la pestaña por horas o días.
+  if (root.classList.contains('is-locked')) {
+    window.addEventListener('site:unlocked', boot, { once: true });
+  } else {
+    boot();
   }
 </script>

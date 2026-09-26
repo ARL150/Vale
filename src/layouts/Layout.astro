@@ -1,11 +1,14 @@
 ---
 import '../styles/global.css';
-import { site } from '../data/content';
+import { site, lock, og, deployUrl } from '../data/content';
+import Lock from '../components/Lock.astro';
 import Loader from '../components/Loader.astro';
 import MusicButton from '../components/MusicButton.astro';
+import ShareButton from '../components/ShareButton.astro';
 
 const favicon =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9D%A4%EF%B8%8F%3C/text%3E%3C/svg%3E";
+const ogImage = `${deployUrl}${og.image}`;
 ---
 
 <!doctype html>
@@ -16,6 +19,20 @@ const favicon =
     <meta name="theme-color" content="#ffe6ec" />
     <meta name="description" content={site.description} />
     <title>{site.title}</title>
+
+    <!-- Vista previa al compartir el link (WhatsApp, etc.): bonita, sin spoilers -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={deployUrl} />
+    <meta property="og:title" content={og.title} />
+    <meta property="og:description" content={og.description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={og.title} />
+    <meta name="twitter:description" content={og.description} />
+    <meta name="twitter:image" content={ogImage} />
+
     <link rel="icon" href={favicon} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,18 +40,33 @@ const favicon =
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600&family=Parisienne&display=swap"
       rel="stylesheet"
     />
-    <script is:inline>
-      document.documentElement.classList.add('js', 'is-loading');
+    <script is:inline define:vars={{ month: lock.month, day: lock.day }}>
+      (function () {
+        var root = document.documentElement;
+        root.classList.add('js', 'is-loading');
+        try {
+          var unlocked = localStorage.getItem('valecita-unlocked') === '1';
+          var now = new Date();
+          var target = new Date(now.getFullYear(), month - 1, day, 0, 0, 0);
+          if (!unlocked && now.getTime() < target.getTime()) root.classList.add('is-locked');
+        } catch (e) {
+          /* sin localStorage: se comporta como si no hubiera guardado nada */
+        }
+      })();
     </script>
   </head>
   <body>
-    <Loader />
-    <main>
-      <slot />
-    </main>
-    <MusicButton />
-    <script>
-      import '../scripts/effects';
-    </script>
+    <Lock />
+    <div class="site" data-site>
+      <Loader />
+      <main>
+        <slot />
+      </main>
+      <MusicButton />
+      <ShareButton />
+      <script>
+        import '../scripts/effects';
+      </script>
+    </div>
   </body>
 </html>

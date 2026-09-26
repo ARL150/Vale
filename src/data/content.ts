@@ -22,6 +22,60 @@ export const hero = {
   button: 'Tengo algo para ti ✨',
 };
 
+export const lock = {
+  /** La página queda bloqueada con un contador hasta esta fecha (mes 1-12, día). */
+  month: 9,
+  day: 28,
+  title: 'Bloqueado hasta el 28 de septiembre',
+  subtitle: 'Algo especial se está preparando. Vuelve cuando el contador llegue a cero, o escribe la contraseña correcta si la tienes.',
+  units: { days: 'días', hours: 'hrs', minutes: 'min', seconds: 'seg' },
+  placeholder: '••••••',
+  button: 'Desbloquear',
+  /** ✏️ Sale una al azar cada vez que la contraseña está mal. Agrega las que quieras. */
+  wrongMessages: [
+    'Contraseña incorrecta. Sigue intentando...',
+    'Pídele a tu novio que te la diga.',
+    'Hazle piojito, seguro te la dice.',
+    'Todavía no es tu cumpleaños. Vuelve después.',
+    'Esa no es. Lo siento, mi amor.',
+    'Ni lo sueñes, todavía no.',
+  ],
+  /**
+   * Hash (no la contraseña en texto plano) para que no aparezca en el código.
+   * Si quieres cambiar la contraseña, pide que te generen el hash de la nueva.
+   * Contraseña actual: 6 dígitos que solo tú conoces.
+   */
+  passwordHash: 'zo8k1p',
+};
+
+export const deployUrl = 'https://vale-dusky.vercel.app';
+
+/** Lo que se ve al pegar el link en WhatsApp/redes: bonito, pero sin spoilers. */
+export const og = {
+  title: 'Shhh... alguien está preparando algo para ti',
+  description: 'Bloqueado hasta el 28 de septiembre. Descúbrelo cuando el contador llegue a cero.',
+  image: '/og-cover.jpg',
+};
+
+export const share = {
+  button: 'Compartir con ella 💌',
+  /** Mensaje que se abre en WhatsApp junto con el link de la página */
+  text: 'Hice esto especialmente para ti, mi amor. Feliz cumpleaños ❤️',
+};
+
+export const revisit = {
+  title: 'Revive los momentos',
+  /** `icon` es una llave (no un emoji): 'mail' | 'photo' | 'book' | 'star' | 'game' | 'heart' */
+  items: [
+    { icon: 'mail', label: 'Para ti', href: '#para-ti' },
+    { icon: 'photo', label: 'Recuerdos', href: '#recuerdos' },
+    { icon: 'book', label: 'Historia', href: '#historia' },
+    { icon: 'star', label: 'Razones', href: '#razones' },
+    { icon: 'game', label: 'Juego', href: '#juego' },
+    { icon: 'heart', label: 'Carta', href: '#carta' },
+  ],
+};
+
 export const message = {
   eyebrow: 'Para ti',
   title: 'Para ti, Valecita',
@@ -34,7 +88,8 @@ export const message = {
 
 export const gallery = {
   title: 'Algunos de mis momentos favoritos contigo ❤️',
-  hint: 'Toca las fotos ✨',
+  giftHint: 'Toca tu regalo y prepárate para el estallido 🎁',
+  hint: 'Toca cada foto ✨',
   /**
    * 📸 PARA PONER TUS FOTOS:
    * 1. Copia tus imágenes a  public/photos/  (jpg, png o webp)
@@ -49,6 +104,21 @@ export const gallery = {
     { src: '/photos/foto-3.jpg', alt: 'Valeria y Abraham abrazados, elegantes', caption: 'Esa noche elegante contigo', ratio: '3/4' },
     { src: '/photos/foto-4.jpg', alt: 'Valeria y Abraham dándose un beso en el elevador', caption: 'Nos robamos besos hasta en el elevador', ratio: '3/4' },
     { src: '/photos/foto-5.jpg', alt: 'Valeria y Abraham de viaje, atardecer', caption: 'Ese viaje que no voy a olvidar', ratio: '3/4' },
+    { src: '/photos/foto-6.jpg', alt: 'Valeria y Abraham con gorras en un centro comercial', caption: 'Esas caras que solo tú me sacas', ratio: '3/4' },
+    { src: '/photos/foto-7.jpg', alt: 'Valeria y Abraham haciendo caras chistosas', caption: 'Nuestras caras de siempre', ratio: '4/3' },
+    { src: '/photos/foto-8.jpg', alt: 'Valeria y Abraham en la Plaza de España, Sevilla', caption: 'Sevilla contigo fue mágico', ratio: '3/4' },
+    { src: '/photos/foto-9.jpg', alt: 'Valeria y Abraham vestidos de negro', caption: 'Combinamos hasta la ropa', ratio: '3/4' },
+    { src: '/photos/foto-10.jpg', alt: 'Valeria y Abraham gritando de la emoción', caption: 'Gritando de la emoción, como siempre', ratio: '4/3' },
+    { src: '/photos/foto-11.jpg', alt: 'Valeria y Abraham en una cena especial', caption: 'Cenas que se sienten de cuento', ratio: '4/3' },
+    { src: '/photos/foto-12.jpg', alt: 'Valeria con la bandera de México', caption: 'Tan orgullosa de los tuyos, mi belga-mexicana', ratio: '3/4' },
+    { src: '/photos/foto-13.jpg', alt: 'Valeria y Abraham con playeras de la selección', caption: 'Echándole porras juntos', ratio: '4/3' },
+    { src: '/photos/foto-14.jpg', alt: 'Abraham dándole un beso en la frente a Valeria', caption: 'Un beso en la frente, mi lugar favorito', ratio: '3/4' },
+    { src: '/photos/foto-15.jpg', alt: 'Valeria y Abraham en la nieve', caption: 'Contigo hasta el frío se siente bien', ratio: '3/4' },
+    { src: '/photos/foto-16.jpg', alt: 'Valeria y Abraham con mascarillas faciales', caption: 'Cuidándonos la cara y muriendo de risa', ratio: '3/4' },
+    { src: '/photos/foto-17.jpg', alt: 'Valeria y Abraham en la Torre Eiffel de noche', caption: 'Esa noche en la Torre Eiffel', ratio: '4/3' },
+    { src: '/photos/foto-18.jpg', alt: 'Valeria y Abraham en una cena, payaseando', caption: 'Payaseando como siempre', ratio: '3/4' },
+    { src: '/photos/foto-19.jpg', alt: 'Valeria y Abraham en la Alhambra al atardecer', caption: 'Ese atardecer en la Alhambra', ratio: '3/4' },
+    { src: '/photos/foto-20.jpg', alt: 'Valeria y Abraham en un partido de fútbol', caption: 'Noche de fútbol contigo', ratio: '4/5' },
   ],
 };
 

@@ -2,29 +2,67 @@
 import { gallery } from '../data/content';
 ---
 
-<section class="section gallery" id="recuerdos">
+<section class="section gallery" id="recuerdos" data-gallery>
   <div class="fx" data-hearts="6" data-sparks="8" aria-hidden="true"></div>
 
   <div class="container container--wide">
     <header class="gallery__head">
       <h2 class="section-title" data-reveal="up">{gallery.title}</h2>
-      <p class="gallery__hint" data-reveal="fade" data-delay="200">{gallery.hint}</p>
     </header>
 
-    <div class="gallery__grid">
-      {
-        gallery.photos.map((photo, i) => (
-          <figure class="card" data-reveal={i % 2 === 0 ? 'left' : 'right'} data-delay={(i % 2) * 120}>
-            <button class="polaroid" type="button" style={`--tilt:${i % 2 === 0 ? -2 : 2}deg`} data-photo aria-label={`Foto: ${photo.caption}`}>
-              <span class="polaroid__img" style={`aspect-ratio:${photo.ratio}`}>
-                <img src={photo.src} alt={photo.alt} loading={i < 2 ? 'eager' : 'lazy'} decoding="async" draggable="false" />
-                <span class="polaroid__shine" aria-hidden="true"></span>
-              </span>
-              <figcaption>{photo.caption}</figcaption>
-            </button>
-          </figure>
-        ))
-      }
+    <!-- 🎁 Regalo: se agita y explota soltando todas las fotos -->
+    <div class="giftbox-wrap" data-reveal="scale" data-delay="150">
+      <div class="giftbox-clip">
+        <div class="giftbox" data-giftbox>
+          <button class="giftbox__tap" type="button" data-open-gift aria-label="Abrir regalo">
+            <svg viewBox="0 0 200 200" width="180" height="180" aria-hidden="true">
+              <defs>
+                <linearGradient id="box1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#ff9bb3"></stop>
+                  <stop offset="1" stop-color="#e8506a"></stop>
+                </linearGradient>
+                <linearGradient id="box2" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#fff0d2"></stop>
+                  <stop offset="1" stop-color="#f4e0a9"></stop>
+                </linearGradient>
+              </defs>
+              <rect x="24" y="88" width="152" height="92" rx="10" fill="url(#box1)"></rect>
+              <rect x="24" y="88" width="152" height="18" fill="#00000014"></rect>
+              <rect x="20" y="62" width="160" height="30" rx="8" fill="url(#box2)"></rect>
+              <rect x="88" y="62" width="24" height="118" fill="#fff6f8" opacity=".85"></rect>
+              <rect x="24" y="88" width="152" height="10" fill="#fff6f8" opacity=".7"></rect>
+              <g class="giftbox__bow">
+                <path d="M100 66c-10-26-46-30-52-8-4 16 20 20 52 10z" fill="#c93657"></path>
+                <path d="M100 66c10-26 46-30 52-8 4 16-20 20-52 10z" fill="#e8506a"></path>
+                <circle cx="100" cy="64" r="10" fill="#f4e0a9"></circle>
+              </g>
+            </svg>
+          </button>
+          <p class="giftbox__hint" data-giftbox-hint>{gallery.giftHint}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Galería: se revela al abrir el regalo -->
+    <div class="grid-wrap">
+      <div class="grid-clip">
+        <p class="gallery__hint" data-gallery-hint>{gallery.hint}</p>
+        <div class="gallery__grid">
+          {
+            gallery.photos.map((photo, i) => (
+              <figure class="card" style={`--i:${i}`}>
+                <button class="polaroid" type="button" style={`--tilt:${i % 2 === 0 ? -2 : 2}deg`} data-photo aria-label={`Foto: ${photo.caption}`}>
+                  <span class="polaroid__img" style={`aspect-ratio:${photo.ratio}`}>
+                    <img src={photo.src} alt={photo.alt} loading={i < 4 ? 'eager' : 'lazy'} decoding="async" draggable="false" />
+                    <span class="polaroid__shine" aria-hidden="true" />
+                  </span>
+                  <figcaption>{photo.caption}</figcaption>
+                </button>
+              </figure>
+            ))
+          }
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -36,12 +74,138 @@ import { gallery } from '../data/content';
 
   .gallery__head {
     text-align: center;
-    margin-bottom: 2.6rem;
+    margin-bottom: 1.6rem;
   }
-  .gallery__hint {
-    margin-top: 0.8rem;
+
+  /* ── Caja de regalo ── */
+  .giftbox-wrap {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.7s var(--ease-out) 0.5s, opacity 0.5s 0.5s;
+  }
+  .giftbox-clip {
+    overflow: hidden;
+    min-height: 0;
+  }
+  .gallery.is-open .giftbox-wrap {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .giftbox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem 0 2.6rem;
+  }
+  .giftbox__tap {
+    padding: 0;
+    filter: drop-shadow(0 20px 22px rgba(201, 54, 87, 0.35));
+    animation: giftFloat 3.6s ease-in-out infinite;
+  }
+  .giftbox__tap:focus-visible {
+    outline: 3px solid var(--gold);
+    outline-offset: 6px;
+    border-radius: 1rem;
+  }
+  .giftbox.is-shaking .giftbox__tap {
+    animation: giftShake 0.7s ease-in-out;
+  }
+  .giftbox.is-popping .giftbox__tap {
+    animation: giftPop 0.6s var(--ease-out) forwards;
+  }
+  .giftbox__bow {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+  }
+
+  @keyframes giftFloat {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-8px) rotate(-1.5deg);
+    }
+  }
+  @keyframes giftShake {
+    0%,
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
+    10% {
+      transform: rotate(-9deg) scale(1.03);
+    }
+    20% {
+      transform: rotate(9deg) scale(1.03);
+    }
+    30% {
+      transform: rotate(-11deg) scale(1.05);
+    }
+    40% {
+      transform: rotate(11deg) scale(1.05);
+    }
+    50% {
+      transform: rotate(-8deg) scale(1.04);
+    }
+    60% {
+      transform: rotate(8deg) scale(1.04);
+    }
+    70% {
+      transform: rotate(-5deg);
+    }
+    80% {
+      transform: rotate(5deg);
+    }
+    90% {
+      transform: rotate(-2deg);
+    }
+  }
+  @keyframes giftPop {
+    to {
+      transform: scale(1.7);
+      opacity: 0;
+    }
+  }
+
+  .giftbox__hint {
     font-size: 0.95rem;
     color: var(--muted);
+    text-align: center;
+    transition: opacity 0.3s;
+  }
+  .giftbox.is-popping .giftbox__hint {
+    opacity: 0;
+  }
+
+  /* ── Galería (oculta hasta abrir el regalo) ── */
+  .grid-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.9s var(--ease-out) 0.35s;
+  }
+  .gallery.is-open .grid-wrap {
+    grid-template-rows: 1fr;
+  }
+  .grid-clip {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .gallery__hint {
+    padding-top: 0.4rem;
+    margin-bottom: 1.6rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s var(--ease-out) 0.9s, transform 0.6s var(--ease-out) 0.9s;
+  }
+  .gallery.is-open .gallery__hint {
+    opacity: 1;
+    transform: none;
   }
 
   /* Dos columnas tipo "muro de recuerdos" en celular, tres en pantallas grandes */
@@ -59,9 +223,17 @@ import { gallery } from '../data/content';
   .card {
     break-inside: avoid;
     margin-bottom: 1.1rem;
-    /* evita que la tarjeta se parta entre columnas en Safari */
     -webkit-column-break-inside: avoid;
     display: block;
+    /* estado "dentro de la caja": aparece en estallido cuando se abre el regalo */
+    opacity: 0;
+    transform: translate3d(0, 36px, 0) scale(0.78) rotate(calc((var(--i, 0) - 2) * 1.4deg));
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    transition-delay: calc(0.9s + var(--i, 0) * 55ms);
+  }
+  .gallery.is-open .card {
+    opacity: 1;
+    transform: none;
   }
 
   .polaroid {
@@ -158,7 +330,40 @@ import { gallery } from '../data/content';
 
 <script>
   import { popHearts } from '../scripts/effects';
+  import { confetti, confettiCannons } from '../scripts/confetti';
 
+  const section = document.querySelector<HTMLElement>('[data-gallery]');
+  const gift = document.querySelector<HTMLElement>('[data-giftbox]');
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-open-gift]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  openBtn?.addEventListener('click', () => {
+    if (!section || !gift || section.classList.contains('is-open')) return;
+
+    const burstAt = () => {
+      const r = openBtn.getBoundingClientRect();
+      const x = (r.left + r.width / 2) / window.innerWidth;
+      const y = (r.top + r.height / 2) / window.innerHeight;
+      confetti({ x, y, count: 130, power: 1.1 });
+      confettiCannons();
+    };
+
+    if (reduce) {
+      section.classList.add('is-open');
+      burstAt();
+      return;
+    }
+
+    gift.classList.add('is-shaking');
+    setTimeout(() => {
+      gift.classList.remove('is-shaking');
+      gift.classList.add('is-popping');
+      section.classList.add('is-open');
+      burstAt();
+    }, 700);
+  });
+
+  // ── Tocar una foto: la resalta y suelta corazones ──
   const photos = document.querySelectorAll<HTMLElement>('[data-photo]');
 
   photos.forEach((el) => {

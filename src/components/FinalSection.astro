@@ -1,9 +1,19 @@
 ---
-import { finale } from '../data/content';
+import { finale, revisit } from '../data/content';
 
 // El emoji va fuera del degradado para conservar su color
 const [titleText, ...rest] = finale.title.split('❤');
 const hasHeart = rest.length > 0;
+
+// Trazos SVG por ícono (nunca emoji): mail, photo, book, star, game, heart
+const ICON_PATHS: Record<string, string> = {
+  mail: 'M3 5.5h18v13H3v-13Zm0 0 9 7 9-7',
+  photo: 'M3.5 5.5h17v13h-17v-13Zm4 5.2a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3ZM4 18l5.5-5.5 3 3L18 10l2.5 2.5',
+  book: 'M4 5.6C4 4.7 4.7 4 5.6 4H12v16H5.6A1.6 1.6 0 0 1 4 18.4V5.6ZM20 5.6c0-.9-.7-1.6-1.6-1.6H12v16h6.4a1.6 1.6 0 0 0 1.6-1.6V5.6Z',
+  star: 'M12 3.3l2.7 5.9 6.3.6-4.8 4.3 1.4 6.3L12 17.1l-5.6 3.3 1.4-6.3-4.8-4.3 6.3-.6L12 3.3Z',
+  game: 'M6.5 8h11a3.5 3.5 0 0 1 3.4 4.3l-.7 3a2.4 2.4 0 0 1-4.2 1L14.5 15h-5L8 16.3a2.4 2.4 0 0 1-4.2-1l-.7-3A3.5 3.5 0 0 1 6.5 8Zm1 3v2.6M6.2 12.3h2.6M15.8 11.3h.01M17.8 13.3h.01',
+  heart: 'M12 20.5S3.8 15.4 3.8 9.8C3.8 6.9 6 4.8 8.7 4.8c1.7 0 3.1.9 3.3 2h0c.2-1.1 1.6-2 3.3-2 2.7 0 4.9 2.1 4.9 5 0 5.6-8.2 10.7-8.2 10.7Z',
+};
 ---
 
 <section class="section final" id="final" data-final>
@@ -28,7 +38,23 @@ const hasHeart = rest.length > 0;
     </h2>
     <p class="final__sub" data-reveal="up" data-delay="500">{finale.subtitle}</p>
 
-    <button class="btn btn--ghost final__top" type="button" data-scroll-to="top" data-reveal="up" data-delay="700">
+    <div class="revisit" data-reveal="up" data-delay="620">
+      <p class="revisit__title">{revisit.title}</p>
+      <nav class="revisit__grid">
+        {
+          revisit.items.map((item) => (
+            <button class="revisit__item" type="button" data-scroll-to={item.href} aria-label={item.label}>
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d={ICON_PATHS[item.icon]} />
+              </svg>
+              <span>{item.label}</span>
+            </button>
+          ))
+        }
+      </nav>
+    </div>
+
+    <button class="btn btn--ghost final__top" type="button" data-scroll-to="top" data-reveal="up" data-delay="780">
       {finale.backToTop}
     </button>
   </div>
@@ -99,7 +125,51 @@ const hasHeart = rest.length > 0;
   }
 
   .final__top {
-    margin-top: 2.8rem;
+    margin-top: 2.2rem;
+  }
+
+  .revisit {
+    margin-top: 2.6rem;
+    width: 100%;
+    max-width: 26rem;
+  }
+  .revisit__title {
+    font-family: var(--font-script);
+    font-size: 1.5rem;
+    color: var(--rose-600);
+    margin-bottom: 1rem;
+  }
+  .revisit__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.7rem;
+  }
+  .revisit__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.9rem 0.4rem;
+    border-radius: 1.2rem;
+    color: var(--rose-600);
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    transition: transform 0.3s var(--ease-out), background 0.3s;
+  }
+  .revisit__item span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--wine);
+  }
+  .revisit__item:active {
+    transform: scale(0.94);
+    background: rgba(255, 255, 255, 0.85);
+  }
+  @media (hover: hover) {
+    .revisit__item:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.85);
+    }
   }
 </style>
 
