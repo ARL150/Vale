@@ -44,12 +44,11 @@ export const gallery = {
    * Puedes agregar o quitar fotos libremente.
    */
   photos: [
-    { src: '/photos/foto-1.svg', alt: 'Valecita y yo', caption: 'Nuestro primer recuerdo juntos', ratio: '4/5' },
-    { src: '/photos/foto-2.svg', alt: 'Una salida juntos', caption: 'Ese día que no paramos de reír', ratio: '1/1' },
-    { src: '/photos/foto-3.svg', alt: 'Un paseo', caption: 'Contigo hasta un paseo cualquiera es perfecto', ratio: '4/5' },
-    { src: '/photos/foto-4.svg', alt: 'Una cena', caption: 'Tu sonrisa, mi cosa favorita', ratio: '4/3' },
-    { src: '/photos/foto-5.svg', alt: 'Un momento especial', caption: 'Uno de los días más bonitos', ratio: '1/1' },
-    { src: '/photos/foto-6.svg', alt: 'Nosotros', caption: 'Y vamos por muchos más', ratio: '4/5' },
+    { src: '/photos/foto-1.jpg', alt: 'Valeria y Abraham frente al espejo', caption: 'Ese beso robado frente al espejo', ratio: '3/4' },
+    { src: '/photos/foto-2.jpg', alt: 'Valeria y Abraham sonriendo juntos', caption: 'Tu sonrisa, mi cosa favorita', ratio: '3/4' },
+    { src: '/photos/foto-3.jpg', alt: 'Valeria y Abraham abrazados, elegantes', caption: 'Esa noche elegante contigo', ratio: '3/4' },
+    { src: '/photos/foto-4.jpg', alt: 'Valeria y Abraham dándose un beso en el elevador', caption: 'Nos robamos besos hasta en el elevador', ratio: '3/4' },
+    { src: '/photos/foto-5.jpg', alt: 'Valeria y Abraham de viaje, atardecer', caption: 'Ese viaje que no voy a olvidar', ratio: '3/4' },
   ],
 };
 
