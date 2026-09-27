@@ -45,7 +45,7 @@ export const lock = {
    * Si quieres cambiar la contraseña, pide que te generen el hash de la nueva.
    * Contraseña actual: 6 dígitos que solo tú conoces.
    */
-  passwordHash: 'zo8k1p',
+  passwordHash: '11m5pds',
 };
 
 export const deployUrl = 'https://vale-dusky.vercel.app';
