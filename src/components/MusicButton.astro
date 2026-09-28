@@ -120,13 +120,21 @@ import { music } from '../data/content';
           audio = new Audio(btn.dataset.src);
           audio.loop = true;
           audio.volume = volume;
+          // Solo si el archivo de verdad falla (404, formato no soportado, etc.)
+          // se pasa para siempre a la cajita de música de repuesto.
+          audio.addEventListener('error', () => {
+            useBox = true;
+          });
         }
         try {
           await audio.play();
           return;
-        } catch {
-          // no hay mp3 (o no se pudo cargar): usa la cajita de música
-          useBox = true;
+        } catch (err) {
+          // "NotAllowedError" solo significa que hacía falta un toque del usuario:
+          // no es un fallo real, así que la próxima vez se vuelve a intentar la
+          // canción real en vez de quedarse para siempre con la cajita de música.
+          if (!(err instanceof Error) || err.name !== 'NotAllowedError') useBox = true;
+          else throw err;
         }
       }
       await playBox();
@@ -154,11 +162,16 @@ import { music } from '../data/content';
     function startOnFirstTouch(e: Event) {
       if (!autoplayArmed) return;
       if ((e.target as HTMLElement)?.closest?.('[data-music]')) return;
-      disarmAutoplay();
       if (playing) return;
       play()
-        .then(() => setState(true))
-        .catch(() => {});
+        .then(() => {
+          setState(true);
+          disarmAutoplay();
+        })
+        .catch(() => {
+          // no arrancó con este toque (raro, pero pasa): se queda armada
+          // para intentarlo de nuevo con el siguiente toque en la página.
+        });
     }
 
     const bootAutoplay = () => {
